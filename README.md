@@ -2,7 +2,7 @@
 
 [![Container Repository on Quay](https://quay.io/repository/chroot.club/oils/status "Container Repository on Quay")](https://quay.io/repository/chroot.club/oils)
 
-YSH (and OSH) shell in a container
+YSH and OSH shells in a container
 
 ## Build
 
