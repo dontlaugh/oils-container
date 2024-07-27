@@ -6,20 +6,21 @@ YSH (and OSH) shell in a container
 
 ## Build
 
-Install `buildah`.
+Install `buildah` and `podman`.
 
-Provide a release version, its checksum, and set a tag for your image. Available
-releases are listed at https://www.oilshell.org/releases.html
+Available releases are listed at https://www.oilshell.org/releases.html
 
-```
+Choose a release version, its checksum, and set a tag for your image.
+
+```sh
 version="0.22.0"
 checksum="7ad64ad951faa9b8fd310fc17df0a93291e041ab75311aca1bc85cbbfa7ad45f"
 image_tag="quay.io/chroot.club/oils:v${version}-debian"
 ```
 
-Run the following commands.
+Run the following command.
 
-```
+```sh
 buildah unshare ./container.sh $version $checksum $image_tag
 ```
 
