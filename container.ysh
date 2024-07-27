@@ -1,11 +1,10 @@
 #!/usr/bin/env ysh
 
 
+# FIXME: I want to take these as script params, but I don't know how
 var version = "0.22.0"
-echo version: $version
 var checksum = "7ad64ad951faa9b8fd310fc17df0a93291e041ab75311aca1bc85cbbfa7ad45f"
 var image_tag = "quay.io/chroot.club/oils:v${version}-debian"
-echo image_tag
 
 
 # Instantiate a working container, build oils-for-unix
