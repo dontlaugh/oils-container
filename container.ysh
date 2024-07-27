@@ -1,11 +1,14 @@
 #!/usr/bin/env ysh
 
+if (len(ARGV) !== 3) {
+  echo "error: must provide exactly 3 parameters:"
+  echo "  version, sha256 checksum, image tag"
+  exit 1
+}
 
-# FIXME: I want to take these as script params, but I don't know how
-var version = "0.22.0"
-var checksum = "7ad64ad951faa9b8fd310fc17df0a93291e041ab75311aca1bc85cbbfa7ad45f"
-var image_tag = "quay.io/chroot.club/oils:v${version}-debian"
-
+var version = $1
+var checksum = $2
+var image_tag = $3
 
 # Instantiate a working container, build oils-for-unix
 var working_container1 = $(buildah from docker.io/debian:stable-slim)

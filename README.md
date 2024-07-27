@@ -24,6 +24,13 @@ Run the following command.
 buildah unshare ./container.sh $version $checksum $image_tag
 ```
 
+Or do this if you have `ysh` on your workstation.
+
+
+```sh
+buildah unshare ./container.ysh $version $checksum $image_tag
+```
+
 An `unshare` session is required, because our container.sh script
 mounts the root filesystems of two working containers. This operation
 would require root privileges otherwise. See `man buildah-unshare`.
