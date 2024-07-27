@@ -17,27 +17,36 @@ if [ "$(id -u)" -ne "0" ]; then
   exit 1
 fi
 
-c1=$(buildah from docker.io/debian:stable-slim)
-buildah add $c1 build.sh /root/
-buildah run $c1 -- sh /root/build.sh $version $checksum
+# Instantiate a working container, build oils-for-unix
+working_container1=$(buildah from docker.io/debian:stable-slim)
+buildah add $working_container1 fetch-and-build.sh /root/
+buildah run $working_container1 -- sh /root/fetch-and-build.sh $version $checksum
 
-c2=$(buildah from docker.io/debian:stable-slim)
+# Instantiate another working container
+working_container2=$(buildah from docker.io/debian:stable-slim)
 
-mnt1=$(buildah mount $c1)
-mnt2=$(buildah mount $c2)
+# Mount the filesystems of both working containers
+mnt1=$(buildah mount $working_container1)
+mnt2=$(buildah mount $working_container2)
 
+# Copy the built binary and readline library from container 1 into container 2
+# This is akin to a multi-stage build in Docker.
 cp $mnt1/usr/local/bin/oils-for-unix $mnt2/usr/local/bin
 cp $mnt1/usr/lib/x86_64-linux-gnu/libreadline.so.8   $mnt2/usr/lib/x86_64-linux-gnu/libreadline.so.8
 cp $mnt1/usr/lib/x86_64-linux-gnu/libreadline.so.8.2 $mnt2/usr/lib/x86_64-linux-gnu/libreadline.so.8.2
 
-buildah run $c2 -- ln -s /usr/local/bin/oils-for-unix /usr/local/bin/osh
-buildah run $c2 -- ln -s /usr/local/bin/oils-for-unix /usr/local/bin/ysh
+# Set up the symlinks so osh and ysh are on the $PATH
+buildah run $working_container2 -- ln -s /usr/local/bin/oils-for-unix /usr/local/bin/osh
+buildah run $working_container2 -- ln -s /usr/local/bin/oils-for-unix /usr/local/bin/ysh
 
-buildah commit $c2 $image_tag
+# Commit our image. It's ready to push after this.
+buildah commit $working_container2 $image_tag
 
-buildah rm $c1
-buildah rm $c2
+# Clean up.
+buildah rm $working_container1
+buildah rm $working_container2
 
+# Run tests.
 echo "Image committed: $image_tag"
 echo "Running tests"
 

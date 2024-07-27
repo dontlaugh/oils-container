@@ -1,24 +1,23 @@
 #!/bin/sh
 
-
 if [ $# -ne 2 ]; then
   echo "build.sh error: supply exactly 2 args: [version, checksum]"
   echo "  see versions and their checksums at: https://www.oilshell.org/releases.html"
   exit 2
 fi
 
-release="$1"
+version="$1"
 checksum="$2"
 
-tempdir=$(mktemp -d)
-cd $tempdir > /dev/null
-apt-get update -y
-apt-get install -y g++ curl libreadline-dev build-essential
-oils_release="oils-for-unix-${release}"
-
-set +x
+oils_release="oils-for-unix-${version}"
 url="https://www.oilshell.org/download/${oils_release}.tar.gz"
 filename=$(basename "$url")
+
+tempdir=$(mktemp -d)
+cd $tempdir
+
+apt-get update -y
+apt-get install -y g++ curl libreadline-dev #build-essential
 
 # Download the file;  Calculate the SHA-256 hash and compare it to the expected value from the website
 set -e
