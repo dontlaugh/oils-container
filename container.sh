@@ -2,9 +2,20 @@
 
 set -e
 
-version="0.22.0"
-checksum="7ad64ad951faa9b8fd310fc17df0a93291e041ab75311aca1bc85cbbfa7ad45f"
-image_tag="quay.io/chroot.club/oils:v${version}-debian"
+if [ $# -ne 3 ]; then
+  echo "error: must provide exactly 3 parameters:"
+  echo "  version, sha256 checksum, image tag"
+  exit 1
+fi
+
+version="$1"
+checksum="$2"
+image_tag="$3"
+
+if [ "$(id -u)" -ne "0" ]; then
+  echo "error: this script must be run in a buildah unshare session, or as root"
+  exit 1
+fi
 
 c1=$(buildah from docker.io/debian:stable-slim)
 buildah add $c1 build.sh /root/
@@ -26,4 +37,15 @@ buildah commit $c2 $image_tag
 
 buildah rm $c1
 buildah rm $c2
+
+echo "Image committed: $image_tag"
+echo "Running tests"
+
+podman run --rm $image_tag osh -c 'echo hi from osh'
+podman run --rm $image_tag ysh -c 'echo hi from ysh'
+
+echo ""
+echo "Things seem okay. Push with:"
+echo ""
+echo "   buildah push $image_tag"
 

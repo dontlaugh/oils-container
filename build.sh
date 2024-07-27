@@ -2,7 +2,7 @@
 
 
 if [ $# -ne 2 ]; then
-  echo "supply exactly 2 args: [version, checksum]"
+  echo "build.sh error: supply exactly 2 args: [version, checksum]"
   echo "  see versions and their checksums at: https://www.oilshell.org/releases.html"
   exit 2
 fi
